@@ -5,7 +5,14 @@ interface PokemonsState{
   [key: string]: SimplePokemon,
 }
 
+
+const getInitialState = () => {
+  const favorites = JSON.parse(localStorage.getItem('favorite-pokemons') ?? '{}');
+  return favorites;
+}
+
 const initialState: PokemonsState = {
+  ...getInitialState(),
   // '1': { id: '1', name: 'bulbasaur'}
 }
 
@@ -15,19 +22,18 @@ const pokemonSlice = createSlice({
   reducers: {
 
     toggleFavorite( state, action: PayloadAction<SimplePokemon> ){
-      
       const pokemon = action.payload;
       const { id } = pokemon;
 
       if( !!state[id] ){
         delete state[id];
-        return;
+      } else {
+        state[id] = pokemon
       }
-
-      state[id] = pokemon
-    }
       
-    
+      // TODO: No se debe de hacer en redux
+      localStorage.setItem('favorite-pokemons', JSON.stringify(state))
+    },     
   }
 });
 
